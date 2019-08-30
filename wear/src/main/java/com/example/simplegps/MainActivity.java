@@ -31,6 +31,8 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     private static final long UPDATE_INTERVAL_MS = 5000;
     private static final long FASTEST_INTERVAL_MS = 5000;
 
+    int state=1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +46,11 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         if (!hasGPS()) {
             Log.d(TAG, "no GPS");
         } else {
-            Log.d(TAG, "yes GPS");
+            Log.d(TAG, "has GPS");
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addApi(Wearable.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
     }
 
     private boolean hasGPS() {
@@ -55,14 +58,9 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
